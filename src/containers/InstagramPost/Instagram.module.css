@@ -1,0 +1,61 @@
+.body {
+    margin: 2% 3% 0;
+    margin-bottom: 0;
+    padding:0;
+}
+
+.card {
+    margin-top:5%; 
+    width:50%;
+    height:auto;
+    margin-bottom:2%; 
+}
+
+.header {
+    background-color:#ffffff; 
+    font-size: 1rem; 
+    font-weight:500;
+}
+
+.img {border-radius: 0px}
+
+.text {
+    font-size: 1rem;
+    display: inline-block;
+    margin-left:2%
+}
+hr {
+    margin-bottom: 0;
+    margin: 0;
+}
+.textareaContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 0;
+}
+
+.textarea {
+    background-color: #ffffff;
+    resize: none;
+    padding-left: 5%;
+    font-size: 1rem;
+    border:none;
+    flex-grow: 1;
+}
+
+.post {
+    color: #0095F6;
+    border: none;
+    background-color: inherit;
+    outline: none;
+    flex-grow: 2;
+}
+.post:focus {
+    outline: none;
+}
+
+span {
+    font-weight:600;
+    margin-left: 5%;
+}

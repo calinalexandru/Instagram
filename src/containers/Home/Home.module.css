@@ -1,0 +1,9 @@
+body {
+    background-color: white;
+}
+
+.homeContainer {
+    width:100%; 
+    display:flex;
+    justify-content:center
+}

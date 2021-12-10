@@ -1,0 +1,17 @@
+.handwritten {
+    font-family: 'Grand Hotel', cursive;
+    font-weight: 500;
+    color: #000000;
+    font-size: 2rem;
+  }
+
+  .navbar {
+    position: sticky;
+    height:3.5rem;
+    border: 1px solid #DADADA;
+    background-color: #FFFFFF;
+  }
+
+.icon{
+    margin-right: 20px;
+}

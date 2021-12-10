@@ -1,0 +1,53 @@
+.label{
+    margin-top: -2%;
+    margin-bottom: 10%;
+}
+h5{
+    color: #313131
+}
+
+input { 
+    display: block;
+    border-radius: 2px;
+    font-size: 14px;
+    border: 0.5px solid #DBDBDB;
+    padding: 5px;
+    margin:auto;
+    margin-top: 2%;
+    width: 70%;
+    height:5vh;
+    background-color: #FAFAFA;
+}
+input:focus {
+    outline: none;
+}
+
+.signupbtn {
+    margin-top: 5%;
+    width: 70%;
+}
+
+.signupform {
+    width: 35%;
+    background-color: rgba(255, 255, 255, .15);  
+    backdrop-filter: blur(5px);
+    display: inline-block;
+    margin-top: 8%;
+    padding: 4%;
+    padding-bottom: 1%;
+    border-radius: 3px;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    
+}
+a{
+    color:white;
+}
+a:hover, a:focus, a:active {
+    text-decoration: none;
+    color: white;
+}
+
+.redirect {margin-top: 8%;}

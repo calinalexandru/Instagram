@@ -1,0 +1,40 @@
+.mainDiv {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.profileInfo {
+  display:flex;
+  outline: 1px solid black;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 5%;
+  margin-top: 5%;
+}
+
+.avatar {
+  border: 1px solid black; 
+  margin-left: 4rem;
+  margin-right: 4rem; 
+}
+.avatar > img {
+  height: 150px;
+  width: 150px;
+  background-size: contain;
+  border-radius: 50%;
+  border: 1px solid black;
+}
+
+.parent {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-items: center;
+  row-gap: 1rem;
+}
+
+.child {
+  width: 100%;
+  text-align: center;
+  font-size: 30px;
+}
