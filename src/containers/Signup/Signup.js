@@ -5,47 +5,81 @@ import { db, auth } from "../Firebase/Firebase";
 import Button from "react-bootstrap/Button";
 import classes from "./Signup.module.css";
 
-
 const Signup = (props) => {
-  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [user, setUser] = useState("");
 
   useEffect(() => {
+    document.body.style.background =
+      "-webkit-linear-gradient(to right, #fcb045, #fd1d1d, #833ab4)";
+    document.body.style.background =
+      "linear-gradient(to right, #fcb045, #fd1d1d, #833ab4)";
+  }, []);
+
+  useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       if (authUser) {
         setUser(authUser);
-        props.history.push("/home");
-
       } else {
         setUser(null);
       }
       return () => unsubscribe();
     });
-  }, [user, username]);
+  }, [user]);
 
   const signup = (event) => {
     event.preventDefault();
 
-    auth.createUserWithEmailAndPassword(email, password)
+    db.collection("users")
+      .where("username", "==", username)
+      .get()
+      .then((snapshot) => {
+
+        if (snapshot.empty) {
+          
+          return auth
+          .createUserWithEmailAndPassword(email, password)
+
+        } else {
+          console.log("username already taken")
+          throw new Error("Username already taken");
+        }
+      })
       .then((authUser) => {
         return authUser.user.updateProfile({
-          displayName: username
+          displayName: username,
+          photoURL:"https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
         });
       })
-      .then(()=>{
-        db.collection('/users')
-        .add({
+      .then(() => {
+        db.collection("users").add({
           username: username,
-          followers:0,
-          following:0,  
-          bio:"",
-          avatarURL:"",
+          followers: 0,
+          following: 0, 
+          bio: "",
+          avatarURL: "",
           followingList: [],
-          followersList: []
-        })
+          followersList: [],
+        });
+        console.log("record created");
+      })
+      // .then(()=> {
+      //   let data = {
+      //       avatarURL: "",
+      //       username: username
+      //   }
+      //   fetch(
+      //     "https://instaclone-77c8f-default-rtdb.firebaseio.com/usernames.json",
+      //     {
+      //       method : "POST",
+      //       body : JSON.stringify(data)
+      //     }
+      //   )
+      // })
+      .then(() => {
+        props.history.push("/setup");
       })
       .catch((error) => alert(error.message));
   };
@@ -72,19 +106,19 @@ const Signup = (props) => {
           </h5>
         </div>
 
-        <input
+        <input className={classes.input}
           type="text"
           placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
         ></input>
 
-        <input
+        <input className={classes.input}
           type="text"
           placeholder="Username"
           onChange={(e) => setUsername(e.target.value)}
         ></input>
 
-        <input
+        <input className={classes.input}
           type="password"
           placeholder="Password"
           onChange={(e) => setPassword(e.target.value)}

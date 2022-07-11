@@ -6,7 +6,7 @@ h5{
     color: #313131
 }
 
-input { 
+.input { 
     display: block;
     border-radius: 2px;
     font-size: 14px;
@@ -18,7 +18,7 @@ input {
     height:5vh;
     background-color: #FAFAFA;
 }
-input:focus {
+.input :focus {
     outline: none;
 }
 

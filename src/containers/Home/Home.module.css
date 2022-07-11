@@ -1,9 +1,16 @@
 body {
-    background-color: white;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+.homeContainer {
+  margin: 0 auto;
+  width: 80%;
+  height: auto;
 }
 
-.homeContainer {
-    width:100%; 
-    display:flex;
-    justify-content:center
+@media screen and (min-width: 360px) and (max-width: 500px) {
+  .homeContainer {
+    margin-left: 0;
+  }
 }

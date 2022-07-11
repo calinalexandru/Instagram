@@ -5,19 +5,20 @@
 .body {
     display: flex;
     justify-content: space-around;
-    border: 1px solid red;
+
     align-items: center;
 }
 
 .imgVisible{
     visibility: visible; 
-    border: 1px solid red; 
+    width: 100%;
+    height: 100%;
 }
 .imgHidden{display: none}
 
 .caption {
     resize: none; 
-    border: 1px solid red;
+    height: 100%;   
 }
 .progressBarDiv {display: flex; justify-content: center}
 .progressBarHidden { visibility: hidden }
@@ -26,8 +27,3 @@
     width: 50%;
 }
 
-.formFile {
-    margin-left: 46%; 
-    padding-bottom: 2%;
-    margin-top: 2.5%
-}

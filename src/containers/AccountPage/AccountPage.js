@@ -1,101 +1,209 @@
-import React, { useEffect, useState } from 'react';
-import classes from './AccountPage.module.css';
-import Navbar from '../Navbar/Navbar';
-import firebase from 'firebase';
-import { db, auth } from '../Firebase/Firebase';
+import React, { useEffect, useState } from "react";
+import classes from "./AccountPage.module.css";
+import NewNavbar from "../NewNavbar/NewNavbar";
+import firebase from "firebase";
+import ImageModal from "../ImageModal/ImageModal";
+import { db, auth } from "../Firebase/Firebase";
+import Button from "react-bootstrap/Button";
 
 const AccountPage = (props) => {
+  const [modal, showModal] = useState(false);
+  const [selectedPostData, setSelectedPostData] = useState({
+    id: "",
+    imageURL: "",
+  });
+  const [posts, setPosts] = useState([]);
+  const [userDetails, setUserDetails] = useState({
+    followers: 0,
+    following: 0,
+    bio: "",
+    profilePic:
+      "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
+  });
 
-    const [images, setImages] = useState([]);
-    const [followers, setFollowers] = useState(0);
-    const [following, setFollowing] = useState(0);
-    const [signedInUser, setSignedInUser] = useState('');
+  const [myDetails, setMyDetails] = useState({
+    signedInUser: "",
+  });
 
-    let username = props.match.url.split("/")[2].substring(1);
+  const [isFollowing, setIsFollowing] = useState(false);
 
-    
-    useEffect(() => {
-        
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                setSignedInUser(user.displayName)
-            }
+  let username = props.match.url.split("/")[2].substring(1);
+
+  const toggleModalHandler = (toggle, id, imageURL) => {
+    setSelectedPostData({
+      id: id,
+      imageURL: imageURL,
+    });
+    showModal(toggle);
+  };
+  console.log(posts);
+  useEffect(() => {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        setMyDetails({
+          signedInUser: auth.currentUser.displayName,
+        });
+      } else {
+        props.history.replace("/");
+      }
+    });
+  }, []);
+  console.log("isFollowing", isFollowing);
+  useEffect(() => {
+    db.collection("posts")
+      .where("username", "==", username)
+      .onSnapshot((snapshot) => {
+        let data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          post: doc.data(),
+        }));
+
+        setPosts(data);
+      });
+
+    db.collection("users")
+      .where("username", "==", username)
+      .onSnapshot((snapshot) => {
+        snapshot.docs.map((doc) => {
+          console.log(doc.data()["followersList"]);
+          setUserDetails({
+            followers: doc.data()["followersList"].length,
+            following: doc.data()["followingList"].length,
+            bio: doc.data()["bio"],
+            profilePic:
+              doc.data()["avatarURL"] ||
+              "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
           });
+        });
+      });
 
-        db.collection("posts")
-        .where("username", '==', username)
-        .onSnapshot((snapshot) => {
-            setImages(snapshot.docs.map((doc) => doc.data()));
+    db.collection("users")
+      .where("username", "==", username)
+      .onSnapshot((snapshot) => {
+        snapshot.docs.map((doc) => {
+          if (doc.data()["followersList"].includes(myDetails.signedInUser)) {
+            setIsFollowing(true);
+          } else {
+            setIsFollowing(false);
+          }
+        });
+      });
+  }, [username, myDetails.signedInUser]);
+
+  const followHandler = () => {
+    db.collection("users")
+      .where("username", "==", username)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          doc.ref.update({
+            followersList: firebase.firestore.FieldValue.arrayUnion(
+              myDetails.signedInUser
+            ),
           });
+        });
+      });
 
-        db.collection("users")
-        .where("username", '==', username)
-        .onSnapshot((snapshot) => {
-            snapshot.docs.map(doc => {
-                setFollowers(doc.data()['followersList'].length);
-                setFollowing(doc.data()['followingList'].length);
-            })
-        })
+    db.collection("users")
+      .where("username", "==", myDetails.signedInUser)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          doc.ref.update({
+            followingList: firebase.firestore.FieldValue.arrayUnion(username),
+          });
+        });
+      });
+  };
 
-    }, [])  
-    
-    const followHandler = () => {
-        db.collection('users')
-        .where("username", '==', username)
-        .get().then(querySnapshot => {
-            querySnapshot.forEach(doc => 
-                doc.ref.update({
-                "followersList": firebase.firestore.FieldValue.arrayUnion(signedInUser)
-              }))
-        })
+  const unFollowHandler = () => {
+    db.collection("users")
+      .where("username", "==", username)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          doc.ref.update({
+            followersList: firebase.firestore.FieldValue.arrayRemove(
+              myDetails.signedInUser
+            ),
+          });
+        });
+      });
 
-        db.collection('users')
-        .where("username", '==', signedInUser)
-        .get().then(querySnapshot => {
-            querySnapshot.forEach(doc => 
-                doc.ref.update({
-                "followingList": firebase.firestore.FieldValue.arrayUnion(username)
-              }))
-        })
+    db.collection("users")
+      .where("username", "==", myDetails.signedInUser)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          doc.ref.update({
+            followingList: firebase.firestore.FieldValue.arrayRemove(username),
+          });
+        });
+      });
+  };
 
-    }
-    let followButton = <button onClick={followHandler}>Follow</button>;
-    return (
-        <div>
-            <Navbar/>
+  let followButton = <Button onClick={followHandler}>Follow</Button>;
+  let unFollowButton = <Button onClick={unFollowHandler}>Unfollow</Button>;
 
-            <div className={classes.mainDiv}>
-            
-            <div className={classes.profileInfo}>
-                <div className={classes.avatar}>
-                    <img src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png" alt=""></img>
-                </div>
-                <div className={classes.stats}>
-                    <div style={{display:'inline'}}>
-                        <p className={`display-4`}>
-                            {username}
-                            {signedInUser!==username?followButton:null}
-                        </p>  
+  return (
+    <div>
+      {modal && (
+        <ImageModal
+          image={selectedPostData.imageURL}
+          id={selectedPostData.id}
+          toggleModalHandler={toggleModalHandler}
+        />
+      )}
 
-                    </div>
-                    <p><strong>86 </strong>posts 
-                    <strong> {followers} </strong> Followers 
-                    <strong> {following} </strong> Following</p>
-                </div>
-      
-            </div>
-           
-                <div className={classes.parent}>
-                    {images.map(image => (
-                        <div className={classes.child}>
-                            <img src={image.imageURL} key={image.imageURL} height="300" width="300"></img>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            
+      <NewNavbar signedinUsername={myDetails.signedInUser} />
 
+      <div className={classes.mainDiv}>
+        <div className={classes.profileInfo}>
+          <div className={classes.avatar}>
+            <img src={userDetails["profilePic"]} alt=""></img>
+            <p>{username}</p>
+          </div>
+
+          <div className={classes.stats}>
+            <p>
+              <strong>{posts.length} </strong>posts
+            </p>
+            <p>
+              <strong> {userDetails["followers"]} </strong> Followers
+            </p>
+            <p>
+              <strong> {userDetails["following"]} </strong> Following
+            </p>
+            {myDetails.signedInUser !== username && !isFollowing
+              ? followButton
+              : null}
+            {myDetails.signedInUser !== username && isFollowing
+              ? unFollowButton
+              : null}
+            <p>{userDetails["bio"]}</p>
+          </div>
         </div>
-    )
-}
-export default AccountPage
+
+        <div className={classes.parent}>
+          {posts.length
+            ? posts.map((post) => (
+                <div
+                  className={classes.child}
+                  onClick={() =>
+                    toggleModalHandler(true, post.id, post.post.imageURL)
+                  }
+                >
+                  <img
+                    className={classes.image}
+                    src={post.post.imageURL}
+                    key={post.post.imageURL}
+                  ></img>
+                </div>
+              ))
+            : null}
+        </div>
+      </div>
+    </div>
+  );
+};
+export default AccountPage;

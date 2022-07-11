@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { withRouter } from "react-router";
 import classes from "./Login.module.css";
 import Button from "react-bootstrap/Button";
-import { auth } from "../Firebase/Firebase";
+import {auth} from "../Firebase/Firebase";
 
 const Login = (props) => {
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    document.body.style.background = "-webkit-linear-gradient(to right, #fcb045, #fd1d1d, #833ab4)";
+    document.body.style.background = "linear-gradient(to right, #fcb045, #fd1d1d, #833ab4)"; 
+  }, [])
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -16,7 +22,9 @@ const Login = (props) => {
       .then(() => {
 
         auth.onAuthStateChanged(user => {
-          if (user) props.history.push("/home")
+          if (user) {
+            props.history.push("/home")
+          }
         });
       
     })
@@ -30,12 +38,12 @@ const Login = (props) => {
     <div className={classes.loginform}>
       <form>
         <p className={classes.brand}>Instagram</p>
-        <input
+        <input className={classes.input}
           type="text"
           placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
         />
-        <input
+        <input className={classes.input}
           type="password"
           placeholder="Password"
           onChange={(e) => setPassword(e.target.value)}

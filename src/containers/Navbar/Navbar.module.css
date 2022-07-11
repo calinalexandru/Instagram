@@ -1,17 +1,62 @@
 .handwritten {
-    font-family: 'Grand Hotel', cursive;
-    font-weight: 500;
-    color: #000000;
-    font-size: 2rem;
+  font-family: "Grand Hotel", cursive;
+  font-weight: 500;
+  color: #000000;
+  font-size: 2rem;
+}
+
+.navbar {
+  position: sticky;
+  height: 3.5rem;
+  border: 1px solid #dadada;
+  background-color: #ffffff;
+}
+
+.icon {
+  margin-right: 1rem;
+}
+.fondo {
+  margin-right: 1rem;
+}
+.navigate {
+  margin-right: 1rem;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: '';
+  height: 30px;
+  width: 30px;
+}
+
+@media screen and (min-width: 360px) and (max-width: 500px) {
+  .handwritten {
+    font-size: 1.7rem;
   }
 
-  .navbar {
-    position: sticky;
-    height:3.5rem;
-    border: 1px solid #DADADA;
-    background-color: #FFFFFF;
+  .icon {
+    height: 25px;
+    width: 25px;
+    margin-right: 10px;
   }
-
-.icon{
-    margin-right: 20px;
+  .fondo {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+  .navigate {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+  select {
+    height: 20px;
+    width: 20px;
+  }
 }
