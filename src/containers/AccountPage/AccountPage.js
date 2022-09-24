@@ -21,10 +21,6 @@ const AccountPage = (props) => {
       "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
   });
 
-  const [myDetails, setMyDetails] = useState({
-    signedInUser: "",
-  });
-
   const [isFollowing, setIsFollowing] = useState(false);
 
   let username = props.match.url.split("/")[2].substring(1);
@@ -36,19 +32,17 @@ const AccountPage = (props) => {
     });
     showModal(toggle);
   };
-  console.log(posts);
+
+  console.log(localStorage.displayName, username)
+
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
-      if (user) {
-        setMyDetails({
-          signedInUser: auth.currentUser.displayName,
-        });
-      } else {
+      if (!user) {
         props.history.replace("/");
       }
     });
   }, []);
-  console.log("isFollowing", isFollowing);
+
   useEffect(() => {
     db.collection("posts")
       .where("username", "==", username)
@@ -65,7 +59,6 @@ const AccountPage = (props) => {
       .where("username", "==", username)
       .onSnapshot((snapshot) => {
         snapshot.docs.map((doc) => {
-          console.log(doc.data()["followersList"]);
           setUserDetails({
             followers: doc.data()["followersList"].length,
             following: doc.data()["followingList"].length,
@@ -74,21 +67,14 @@ const AccountPage = (props) => {
               doc.data()["avatarURL"] ||
               "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
           });
-        });
-      });
-
-    db.collection("users")
-      .where("username", "==", username)
-      .onSnapshot((snapshot) => {
-        snapshot.docs.map((doc) => {
-          if (doc.data()["followersList"].includes(myDetails.signedInUser)) {
+          if (doc.data()["followersList"].includes(localStorage.displayName)) {
             setIsFollowing(true);
           } else {
             setIsFollowing(false);
           }
         });
       });
-  }, [username, myDetails.signedInUser]);
+  }, [username, localStorage.displayName]);
 
   const followHandler = () => {
     db.collection("users")
@@ -98,14 +84,14 @@ const AccountPage = (props) => {
         querySnapshot.forEach((doc) => {
           doc.ref.update({
             followersList: firebase.firestore.FieldValue.arrayUnion(
-              myDetails.signedInUser
+              localStorage.displayName
             ),
           });
         });
       });
 
     db.collection("users")
-      .where("username", "==", myDetails.signedInUser)
+      .where("username", "==", localStorage.displayName)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -124,14 +110,14 @@ const AccountPage = (props) => {
         querySnapshot.forEach((doc) => {
           doc.ref.update({
             followersList: firebase.firestore.FieldValue.arrayRemove(
-              myDetails.signedInUser
+              localStorage.displayName
             ),
           });
         });
       });
 
     db.collection("users")
-      .where("username", "==", myDetails.signedInUser)
+      .where("username", "==", localStorage.displayName)
       .get()
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
@@ -146,7 +132,7 @@ const AccountPage = (props) => {
   let unFollowButton = <Button onClick={unFollowHandler}>Unfollow</Button>;
 
   return (
-    <div>
+    <div className={classes.imageModal}>
       {modal && (
         <ImageModal
           image={selectedPostData.imageURL}
@@ -155,7 +141,7 @@ const AccountPage = (props) => {
         />
       )}
 
-      <NewNavbar signedinUsername={myDetails.signedInUser} />
+      <NewNavbar signedinUsername={localStorage.displayName} />
 
       <div className={classes.mainDiv}>
         <div className={classes.profileInfo}>
@@ -174,10 +160,10 @@ const AccountPage = (props) => {
             <p>
               <strong> {userDetails["following"]} </strong> Following
             </p>
-            {myDetails.signedInUser !== username && !isFollowing
+            {(localStorage.displayName !== username && !isFollowing)
               ? followButton
               : null}
-            {myDetails.signedInUser !== username && isFollowing
+            {(localStorage.displayName !== username && isFollowing)
               ? unFollowButton
               : null}
             <p>{userDetails["bio"]}</p>
@@ -188,6 +174,7 @@ const AccountPage = (props) => {
           {posts.length
             ? posts.map((post) => (
                 <div
+                  key={post.id}
                   className={classes.child}
                   onClick={() =>
                     toggleModalHandler(true, post.id, post.post.imageURL)
@@ -206,4 +193,4 @@ const AccountPage = (props) => {
     </div>
   );
 };
-export default AccountPage;
+export default React.memo(AccountPage);

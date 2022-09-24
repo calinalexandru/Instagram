@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import classes from "./PostModal.module.css";
 import { db, storage, auth } from "../Firebase/Firebase";
 import { Modal, Form, ProgressBar, Button } from "react-bootstrap";

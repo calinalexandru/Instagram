@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import classes from "./Instagram.module.css";
 import { auth, db } from "../Firebase/Firebase";
+import { useHistory } from "react-router-dom";
 
 const InstagramPost = (props) => {
+
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
+  const history = useHistory();
 
   useEffect(() => {
     let unsubscribe;
@@ -18,38 +21,57 @@ const InstagramPost = (props) => {
       });
 
     return () => unsubscribe();
-  }, []);
+  }, [props.postId]);
 
   const addCommentHandler = (event) => {
     event.preventDefault();
-    db.collection("posts").doc(props.postId).collection("comments").add({
-      text: comment,
-      username: auth.currentUser.displayName,
-    });
+    db.collection("posts")
+      .doc(props.postId)
+      .collection("comments")
+      .add({
+        text: comment,
+        username: auth.currentUser.displayName,
+        avatar:
+          auth.currentUser.photoURL ||
+          "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
+      });
     setComment("");
+  };
+
+  const redirectToAccount = (event) => {
+    history.push(`/account/:${event.target.textContent}`);
   };
 
   return (
     <Card className={classes.card}>
       <Card.Header>
-        <div className={classes.avatarUsername}>
-          <div
-            className={classes.avatar}
-            style={{
-              background: `url(${props.avatarURL})`,
-            }}
-          ></div>
+        <div className={classes.avatarUsername} onClick={redirectToAccount}>
+          <div className={classes.avatar}>
+            <img
+              className={classes.avatarURL}
+              style={{
+                borderRadius: "50%",
+              }}
+              src={
+                props.avatarURL ||
+                "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
+              }
+              alt=""
+            />
+          </div>
+
           <div className={classes.postUsername}>{props.postUsername}</div>
         </div>
       </Card.Header>
 
       <Card.Img className={classes.img} variant="top" src={props.imageURL} />
 
-      <Card.Body className={classes.body}>
-     
-        <Card.Text className={classes.text}>{props.postUsername}</Card.Text>
+      <div className={classes.body}>
+        <Card.Text className={classes.text} onClick={redirectToAccount}>
+          {props.postUsername}
+        </Card.Text>
         <Card.Text className={classes.text}>{props.caption}</Card.Text>
-      </Card.Body>
+      </div>
 
       <div style={{ margin: "0", padding: "0" }}>
         {comments.map((comment) => (
@@ -68,26 +90,28 @@ const InstagramPost = (props) => {
                     borderRadius: "50%",
                   }}
                   src={
-                    auth.currentUser.photoURL ||
+                    comment.avatar ||
                     "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
                   }
                   alt=""
                 />
               </div>
-              <div className={classes.comment}>{comment.username}</div>
+              <div className={classes.comment} onClick={redirectToAccount}>
+                {comment.username}
+              </div>
 
               <div className={classes.username}>{comment.text}</div>
             </div>
           </div>
         ))}
       </div>
-      <hr />
+      <hr className={classes.hr} />
       <div>
         <div className={classes.textareaContainer}>
           <textarea
             value={comment}
             rows="1"
-            className={`form-control ${classes.textarea}`}
+            className={classes.textarea}
             placeholder="Add a comment..."
             onChange={(e) => {
               setComment(e.target.value);

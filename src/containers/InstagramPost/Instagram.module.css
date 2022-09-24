@@ -1,13 +1,15 @@
 .body {
-margin:0;
+  margin: 0;
   padding: 0;
+  margin-bottom: 0;
+
 }
 
 .card {
   margin-top: 5%;
   width: 50%;
   height: auto;
-  margin-bottom: 2%;
+  margin-bottom: 0;
 }
 
 .avatarUsername {
@@ -28,20 +30,24 @@ margin:0;
 .postUsername {
   display: inline;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .img {
   border-radius: 0px;
-
+  margin-bottom: 0;
 }
 
 .text {
   font-size: 1rem;
   display: inline-block;
+  margin-top: 0;
   margin-left: 2%;
   font-weight: 600;
 }
-
+.text:first-child {
+  cursor: pointer;
+}
 .avatarURL {
   height: 25px;
   width: 25px;
@@ -52,26 +58,26 @@ margin:0;
   font-size: 1rem;
   margin-left: 1%;
   font-weight: 600;
+  cursor: pointer;
 }
 .username {
   margin-left: 1%;
   font-size: 1rem;
 }
-hr {
-  margin-bottom: 0;
-  margin: 0;
-}
+ .hr{
+    padding: 0px;
+    margin: 0px;    
+  }
 .textareaContainer {
   display: flex;
   flex-direction: row;
   align-items: center;
-  
   justify-content: center;
-  height: 50%;
+  height: 100%;
+  margin-top: 0;
 }
 
 .textarea {
-  background-color: #ffffff;
   resize: none;
   padding-left: 3%;
   padding-top: 1%;
@@ -133,6 +139,7 @@ span {
   .username {
     margin-left: 1%;
     font-size: 0.8rem;
+    
   }
   .textarea {
     padding-left: 3%;

@@ -43,7 +43,7 @@ function Navigate() {
         {posts.map((post) => (
           <div>
             <img
-              src={post.download_url}
+              src={post.download_url + '.webp'}
               alt=""
               style={{ height: "100%", width: "100%" }}
             />

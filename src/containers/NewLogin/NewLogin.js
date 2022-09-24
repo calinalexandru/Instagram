@@ -1,20 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { withRouter } from "react-router";
 import Button from "react-bootstrap/Button";
-import { auth } from "../Firebase/Firebase";
+import { db, auth } from "../Firebase/Firebase";
 import classes from "./NewLogin.module.css";
 
 const NewLogin = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    document.body.style.background =
-      "-webkit-linear-gradient(to right, #fcb045, #fd1d1d, #833ab4)";
-    document.body.style.background =
-      "linear-gradient(to right, #fcb045, #fd1d1d, #833ab4)";
-  }, []);
 
   const submitHandler = (event) => {
     event.preventDefault();
@@ -23,12 +16,27 @@ const NewLogin = (props) => {
       .then(() => {
         auth.onAuthStateChanged((user) => {
           if (user) {
-            props.history.push("/home");
+            db.collection("users")
+              .where("username", "==", user.displayName)
+              .onSnapshot((snapshot) => {
+                snapshot.docs.map((doc) => {
+                  localStorage.setItem("isAuthenticated", "true");
+                  localStorage.setItem("displayName", auth.currentUser.displayName);
+                  let data = doc.data();
+                  props.history.push({
+                    pathname: "/home",
+                    state: data,
+                  });
+                });
+              });
+          } else {
+            props.history.replace("/");
           }
         });
       })
+
       .catch((err) => {
-        props.history.push("/");
+        props.history.replace("/");
         alert(err.message);
       });
   };
@@ -37,6 +45,11 @@ const NewLogin = (props) => {
     <div className={classes.loginFormContainer}>
       <form className={classes.loginForm}>
         <div className={classes.brand}>Instagram</div>
+        <p className={classes.message}>
+          Sign up to see photos and videos
+          <br />
+          from your friends
+        </p>
         <div className={classes.inputControl}>
           <input
             className={classes.input}
@@ -61,7 +74,7 @@ const NewLogin = (props) => {
           </Button>
         </div>
       </form>
-      <h6 id="signuplink" style={{ marginTop: "1%", textAlign: "center" }}>
+      <h6 classname={classes.linkToSignup}>
         Don't have an account? <Link to="/signup">Sign up</Link>
       </h6>
     </div>

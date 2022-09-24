@@ -8,9 +8,15 @@ body {
   width: 80%;
   height: auto;
 }
-
+.noFollowingMessage {
+  font-weight: 100;
+  text-align: center;
+  padding: 10%;
+  margin: 0;
+}
 @media screen and (min-width: 360px) and (max-width: 500px) {
   .homeContainer {
-    margin-left: 0;
+    width: 100vw;
+    height: auto;
   }
 }

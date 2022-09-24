@@ -1,59 +1,59 @@
 import React, { useEffect, useState } from "react";
 import NewNavbar from "../NewNavbar/NewNavbar";
 import InstagramPost from "../InstagramPost/InstagramPost";
-import { db } from "../Firebase/Firebase";
+import { db, auth } from "../Firebase/Firebase";
 
 import classes from "./Home.module.css";
 
 const Home = (props) => {
-
   const [posts, setPosts] = useState([]);
+  const [data, setData] = useState({});
 
   useEffect(() => {
-    console.log("Use Effect Ran")
-    document.body.style.background = "#FAFAFA";
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        db.collection("users")
+          .where("username", "==", user.displayName)
+          .onSnapshot((snapshot) => {
+            snapshot.docs.map((doc) => {
+              setData(doc.data());
+            });
+          });
+      }
+    });
+  }, []);
 
-    for (const person of props.data.followingList) {
+  useEffect(() => {
+    if (data.followingList) {
+      for (const person of data.followingList) {
+        db.collection("posts")
+          .where("username", "==", person)
+          .onSnapshot((snapshot) => {
+            let data_ = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              post: doc.data(),
+            }));
 
-      db.collection("posts")
-        .where("username", "==", person)
-        .onSnapshot((snapshot) => {
-          let data = snapshot.docs.map((doc) => ({
-            id: doc.id,
-            post: doc.data(),
-          }));
-
-          if (localStorage.getItem("posts")) {
-            let allPosts = JSON.parse(localStorage.getItem("posts"));
-            allPosts.push(...data);
-            localStorage.setItem("posts", JSON.stringify(allPosts));
-          } else {
-            localStorage.setItem("posts", JSON.stringify(data));
-          }
-        });
+            if (localStorage.getItem("posts")) {
+              let allPosts = JSON.parse(localStorage.getItem("posts"));
+              allPosts.push(...data_);
+              localStorage.setItem("posts", JSON.stringify(allPosts));
+            } else {
+              localStorage.setItem("posts", JSON.stringify(data_));
+            }
+          });
+      }
+      setPosts(JSON.parse(localStorage.getItem("posts")));
+      localStorage.removeItem("posts");
     }
+  }, [props, data]);
 
-    setPosts(JSON.parse(localStorage.getItem("posts")));
-    localStorage.clear();
-    
-  }, [props]);
-
-  if (
-    props.data.followingList === undefined ||
-    props.data.followingList.length === 0
-  ) {
+  if (data.followingList === undefined || data.followingList.length === 0) {
     return (
-      <div>
+      <div style={{ background: "white", height: "100vh", maxHeight: "100%" }}>
         <NewNavbar />
         <div className={classes.homeContainer}>
-          <h1
-            style={{
-              fontWeight: "100",
-              textAlign: "center",
-              padding: "10%",
-              margin: "0",
-            }}
-          >
+          <h1 className={classes.noFollowingMessage}>
             Follow Some Accounts To See Posts
           </h1>
         </div>
@@ -62,13 +62,16 @@ const Home = (props) => {
   }
 
   return (
-    <div>
+    <div style={{ background: "white" }}>
       <NewNavbar />
       <div className={classes.homeContainer}>
         {posts?.map(({ id, post }) => {
           return (
             <InstagramPost
-              avatarURL={post.avatarURL}
+              avatarURL={
+                post.avatarURL ||
+                "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png"
+              }
               key={id}
               postId={id}
               postUsername={post.username}

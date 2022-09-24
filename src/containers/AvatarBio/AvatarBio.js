@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import classes from "./AvatarBio.module.css";
 import { db, auth, storage } from "../Firebase/Firebase";
 
@@ -14,51 +14,71 @@ const AvatarBio = (props) => {
     setPreview(URL.createObjectURL(file));
   };
 
-  const nextButtonHandler = () => {
-    if (avatar.name) {
-      storage
-        .ref(`avatar/${avatar.name}`)
-        .put(avatar)
-        .then(() => {
-          storage
-            .ref("avatar")
-            .child(avatar.name)
-            .getDownloadURL()
-            .then((url) => {
-              console.log(url);
-              db.collection("users")
-                .where("username", "==", auth.currentUser.displayName)
-                .get()
-                .then((querySnapshot) => {
-                  querySnapshot.forEach((doc) =>
-                    doc.ref.update({
-                      avatarURL:
-                        url ||
-                        "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
-                      bio: bio,
-                    })
-                  );
-                })
-                .then(() => {
-                  auth.currentUser.updateProfile({
-                    photoURL:
+  const nextButtonHandler = (event) => {
+    event.preventDefault();
+    if (avatar) {
+      const upload = storage.ref(`profilepics/${avatar.name}`).put(avatar);
+
+      upload.on("state_changed", () => {
+        storage
+          .ref("profilepics")
+          .child(avatar.name)
+          .getDownloadURL()
+          .then((url) => {
+            db.collection("users")
+              .where("username", "==", auth.currentUser.displayName)
+              .get()
+              .then((querySnapshot) => {
+                querySnapshot.forEach((doc) =>
+                  doc.ref.update({
+                    avatarURL:
                       url ||
                       "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
-                  });
+                    bio: bio,
+                  })
+                );
+                return url;
+              })
+              .then((url) => {
+                auth.currentUser.updateProfile({
+                  photoURL:
+                    url ||
+                    "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
                 });
-            });
+              })
+              .then(() => {
+                props.history.replace("/home");
+              });
+          });
+      });
+    } else {
+      db.collection("users")
+        .where("username", "==", auth.currentUser.displayName)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) =>
+            doc.ref.update({
+              avatarURL:
+                "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
+              bio: bio,
+            })
+          );
         })
         .then(() => {
-          props.history.push("/home");  
+          auth.currentUser.updateProfile({
+            photoURL:
+              "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
+          });
+        })
+        .then(() => {
+          props.history.replace("/home");
         });
-    } else {
-      props.history.push("/home");
     }
   };
 
   return (
     <div className={classes.parent}>
-      <form className={classes.form}>
+      <form className={classes.form} onSubmit={nextButtonHandler}>
         <div className={classes.avatarContainer}>
           <img
             src={preview}
@@ -69,17 +89,18 @@ const AvatarBio = (props) => {
           ></img>
         </div>
 
-        <div>
+        <div className={classes.fileBioContainer}>
+          <label htmlFor="files" className={classes.avatarLabel}>
+            Select file
+          </label>
+
           <input
-            className={classes.input}
             type="file"
+            className={classes.hidden}
+            id="files"
             onChange={(e) => getImageName(e.target.files[0])}
           ></input>
-        </div>
 
-        <div className={classes.overlay}></div>
-
-        <div className={classes.bio}>
           <input
             type="text"
             placeholder="Bio"
@@ -88,10 +109,8 @@ const AvatarBio = (props) => {
             }}
           ></input>
         </div>
+        <button className={classes.next}>Next</button>
       </form>
-      <button className={classes.next} onClick={nextButtonHandler}>
-        Next
-      </button>
     </div>
   );
 };

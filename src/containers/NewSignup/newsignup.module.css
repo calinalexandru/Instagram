@@ -1,15 +1,15 @@
-.loginFormContainer {
+.signupFormContainer {
   height: 100vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: -webkit-linear-gradient(to right, #fcb045, #fd1d1d, #833ab4);
-  background: linear-gradient(to right, #fcb045, #fd1d1d, #833ab4);
+  background : linear-gradient(to right, #fcb045, #fd1d1d, #833ab4);
+  background : -webkit-linear-gradient(to right, #fcb045, #fd1d1d, #833ab4);
 }
 
-.loginForm {
+.signupForm {
   width: 30%;
   height: auto;
   background-color: white;
@@ -33,7 +33,6 @@
 
 .message {
   text-align: center;
-  color: #212529;
   font-weight: 600;
 }
 .inputControl {
@@ -70,27 +69,23 @@
   outline: none;
 }
 
-.loginbtn {
+.signupbtn {
   width: 100%;
 }
-
-.linkToSignup {
+.linkToLogin {
   margin-top: 1%;
   text-align: center;
 }
-
-h6 > a {
-  color: white;
+h6 > a{
+  color:white;
 }
-h6 > a:hover,
-a:focus,
-a:active {
+h6 > a:hover, a:focus, a:active {
   text-decoration: none;
   color: white;
 }
 
 @media only screen and (min-width: 300px) and (max-width: 480px) {
-  .loginForm {
+  .signupForm {
     width: 65%;
     height: auto;
   }
@@ -98,9 +93,11 @@ a:active {
   .brand {
     width: 100%;
     font-size: 3.75rem;
+    
   }
   .message {
     font-size: 0.9rem;
+    color: #212529;
   }
   .inputControl {
     height: 100%;
@@ -117,13 +114,13 @@ a:active {
     padding: 5px;
     width: 100%;
   }
-  .loginbtn {
+  .signupbtn {
     width: 100%;
   }
 }
 
 @media screen and (min-width: 481px) and (max-width: 768px) {
-  .loginForm {
+  .signupForm {
     width: 50%;
     height: auto;
   }
@@ -152,7 +149,7 @@ a:active {
     padding: 5px;
     width: 100%;
   }
-  .loginbtn {
+  .signupbtn {
     width: 100%;
   }
   h6 {
@@ -161,7 +158,7 @@ a:active {
 }
 
 @media screen and (min-width: 769px) and (max-width: 1024px) {
-  .loginForm {
+  .signupForm {
     width: 50%;
     height: auto;
   }
@@ -189,7 +186,7 @@ a:active {
     padding: 5px;
     width: 100%;
   }
-  .loginbtn {
+  .signupbtn {
     width: 100%;
   }
   h6 {

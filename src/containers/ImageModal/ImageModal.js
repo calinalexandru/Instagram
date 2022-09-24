@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { db, auth } from "../Firebase/Firebase";
+import { db } from "../Firebase/Firebase";
 import classes from "./ImageModal.module.css";
 
 const ImageModal = (props) => {
