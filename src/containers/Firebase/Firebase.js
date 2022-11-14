@@ -4,13 +4,13 @@ import 'firebase/firestore';
 import 'firebase/storage';
 
 firebase.initializeApp({
-  apiKey: "AIzaSyDAIugNWhweic-7de2PtP18pn6CKe56u3M",
+  apiKey: "",
   authDomain: "instaclone-77c8f.firebaseapp.com",
   databaseURL: "https://instaclone-77c8f-default-rtdb.firebaseio.com",
   projectId: "instaclone-77c8f",
-  storageBucket: "instaclone-77c8f.appspot.com",
-  messagingSenderId: "456424503295",
-  appId: "1:456424503295:web:074779c29d2446095b99ca",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
   measurementId: "G-G8Y2KWS3ZW"
 });
 
