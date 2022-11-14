@@ -17,12 +17,12 @@ const NewLogin = (props) => {
         auth.onAuthStateChanged((user) => {
           if (user) {
             db.collection("users")
-              .where("username", "==", user.displayName)
+              .where("username", "==", user.displayName) // check if the user exists in the db
               .onSnapshot((snapshot) => {
                 snapshot.docs.map((doc) => {
-                  localStorage.setItem("isAuthenticated", "true");
-                  localStorage.setItem("displayName", auth.currentUser.displayName);
-                  let data = doc.data();
+                  localStorage.setItem("isAuthenticated", "true"); // set the flag as true in localstorage
+                  localStorage.setItem("displayName", auth.currentUser.displayName); // set displayname (username) in localstorage
+                  let data = doc.data(); // send the user data as prop to home component and redirect
                   props.history.push({
                     pathname: "/home",
                     state: data,
