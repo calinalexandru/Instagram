@@ -24,6 +24,11 @@ const Home = (props) => {
   }, []);
 
   useEffect(() => {
+    /*
+    Logic to fetch all the posts from all accounts you're following.
+    Loop over all the followed accounts, for every account fetch all the posts and append to the localstorage. 
+    Save all the posts in state and clear localstorage
+    */
     if (data.followingList) {
       for (const person of data.followingList) {
         db.collection("posts")
@@ -48,7 +53,7 @@ const Home = (props) => {
     }
   }, [props, data]);
 
-  if (data.followingList === undefined || data.followingList.length === 0) {
+  if (data.followingList === undefined || data.followingList.length === 0) { // fallback UI if no accounts followed
     return (
       <div style={{ background: "white", height: "100vh", maxHeight: "100%" }}>
         <NewNavbar />
@@ -65,7 +70,7 @@ const Home = (props) => {
     <div style={{ background: "white" }}>
       <NewNavbar />
       <div className={classes.homeContainer}>
-        {posts?.map(({ id, post }) => {
+        {posts?.map(({ id, post }) => { // Loop over and display the posts from the accounts followed
           return (
             <InstagramPost
               avatarURL={
