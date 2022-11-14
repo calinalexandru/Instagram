@@ -15,15 +15,17 @@ const Search = (props) => {
       )
         .then((res) => res.json())
         .then((resData) => {
-          let searchQuery = search.replace(/\s+/g, "").toLowerCase();
-          console.log(searchQuery);
+        
+          // get the releant userinfo - username, avatar image url
+        
+          let searchQuery = search.replace(/\s+/g, "").toLowerCase(); //remove black spaces from the input query
+        
           for (const key in resData) {
-            console.log(resData[key]["avatarURL"], resData[key]["username"]);
             let username = resData[key]["username"]
               .replace(/\s+/g, "")
               .toLowerCase();
             if (
-              username.indexOf(searchQuery) !== -1 &&
+              username.indexOf(searchQuery) !== -1 &&   // if the username matches partially with the search input query, add to the list
               username.startsWith(searchQuery)
             ) {
               usersList.push([
@@ -63,7 +65,7 @@ const Search = (props) => {
         </div>
       </div>
 
-      {users.length > 0 ? <ShowSearchedUsers users={users} /> : null}
+      {users.length > 0 ? <ShowSearchedUsers users={users} /> : null}  // pass the list of matched users as props to ShowSearchedUsers component
     </div>
   );
 };
