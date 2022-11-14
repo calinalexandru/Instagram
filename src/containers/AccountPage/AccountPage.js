@@ -23,17 +23,18 @@ const AccountPage = (props) => {
 
   const [isFollowing, setIsFollowing] = useState(false);
 
-  let username = props.match.url.split("/")[2].substring(1);
+  let username = props.match.url.split("/")[2].substring(1); // Extract the username from the URL
 
   const toggleModalHandler = (toggle, id, imageURL) => {
+    /* 
+    Handler function to pop up a modal for the selected post 
+    */
     setSelectedPostData({
       id: id,
       imageURL: imageURL,
     });
     showModal(toggle);
   };
-
-  console.log(localStorage.displayName, username)
 
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
@@ -44,6 +45,10 @@ const AccountPage = (props) => {
   }, []);
 
   useEffect(() => {
+    /* 
+    this useEffect runs when you either visit your account page or somone else's
+    and fetches all the data - profile pic, posts, followers, accounts followed
+    */
     db.collection("posts")
       .where("username", "==", username)
       .onSnapshot((snapshot) => {
@@ -67,7 +72,11 @@ const AccountPage = (props) => {
               doc.data()["avatarURL"] ||
               "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png",
           });
+          
+          // check if you are already following the visited account
+          
           if (doc.data()["followersList"].includes(localStorage.displayName)) {
+            
             setIsFollowing(true);
           } else {
             setIsFollowing(false);
@@ -77,6 +86,9 @@ const AccountPage = (props) => {
   }, [username, localStorage.displayName]);
 
   const followHandler = () => {
+    /*
+    This handler function updates your followingList and also followersList of the visted account
+    */
     db.collection("users")
       .where("username", "==", username)
       .get()
@@ -103,6 +115,9 @@ const AccountPage = (props) => {
   };
 
   const unFollowHandler = () => {
+    /*
+      Same as followHandler except vice-versa
+    */
     db.collection("users")
       .where("username", "==", username)
       .get()
@@ -150,6 +165,8 @@ const AccountPage = (props) => {
             <p>{username}</p>
           </div>
 
+           // Display stats: # of posts, followers and accounts followed by you
+
           <div className={classes.stats}>
             <p>
               <strong>{posts.length} </strong>posts
@@ -160,9 +177,17 @@ const AccountPage = (props) => {
             <p>
               <strong> {userDetails["following"]} </strong> Following
             </p>
+             /*
+             Display the Follow Button when you are not already following the visited account
+             Do not display the button if you visited your own account page
+              */
             {(localStorage.displayName !== username && !isFollowing)
               ? followButton
               : null}
+              /*
+             Display the Unfollow Button when you are already following the visited account
+             Do not display the button if you visited your own account page
+              */
             {(localStorage.displayName !== username && isFollowing)
               ? unFollowButton
               : null}
@@ -170,6 +195,7 @@ const AccountPage = (props) => {
           </div>
         </div>
 
+        // Display all posts
         <div className={classes.parent}>
           {posts.length
             ? posts.map((post) => (
