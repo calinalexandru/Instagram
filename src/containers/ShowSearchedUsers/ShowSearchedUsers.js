@@ -1,3 +1,7 @@
+/*
+  This component receives props from Search.js and displays the matched users info - avatar image and username
+*/
+
 import React from "react";
 import classes from "./ShowSearchedUsers.module.css";
 const ShowSearchedUsers = (props) => {
